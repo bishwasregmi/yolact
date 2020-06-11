@@ -205,10 +205,15 @@ def prep_display(dets_out, img, h, w, undo_transform=True, class_color=False, ma
         # begin added       // filter out the person masks and class indices
         temp_masks = []
         classes_to_mask = []
+        x = []          # save the center points of the boxes in the same order as the masks
+        y = []
         for i, j in enumerate(classes):
             if j == 0:
                 temp_masks.append(i)
                 classes_to_mask.append(j)
+                x1, y1, x2, y2 = boxes[i, :]
+                x.append((x1+x2)/2)
+                y.append((y1+y2)/2)
         num_dets_to_consider = len(classes_to_mask)
         num_dets_to_consider = 0
         if num_dets_to_consider == 0:  # make it black before returning TODO: FIXME
