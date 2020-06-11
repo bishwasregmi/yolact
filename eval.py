@@ -212,8 +212,8 @@ def prep_display(dets_out, img, h, w, undo_transform=True, class_color=False, ma
                 temp_masks.append(i)
                 classes_to_mask.append(j)
                 x1, y1, x2, y2 = boxes[i, :]
-                x.append((x1+x2)/2)
-                y.append((y1+y2)/2)
+                x.append((int)(x1+x2)/2)
+                y.append((int)(y1+y2)/2)
         num_dets_to_consider = len(classes_to_mask)
         print("x: ", x)
         print("y: ", y)
