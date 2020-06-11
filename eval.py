@@ -210,8 +210,9 @@ def prep_display(dets_out, img, h, w, undo_transform=True, class_color=False, ma
                 temp_masks.append(i)
                 classes_to_mask.append(j)
         num_dets_to_consider = len(classes_to_mask)
+        num_dets_to_consider = 0
         if num_dets_to_consider == 0:  # make it black before returning TODO: FIXME
-            return ((img_gpu * get_color(0, on_gpu=img_gpu.device.index).view(1, 1, 1, 3)) * 255).byte().cpu().numpy()
+            return ((img_gpu * 0).byte().cpu().numpy()
         # print("num_dets_to_consider: ", num_dets_to_consider)
         # print("filtered classes : ", classes_to_mask)
         # temp_masks = np.array(temp_masks).T
