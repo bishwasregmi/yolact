@@ -129,14 +129,14 @@ def prep_display_mod(dets_out, img, h, w,depth_map, rel_depth, undo_transform=Tr
         obj_depths = obj_depths[sorted_idx_by_depth]
         people_masks_idxs = people_masks_idxs[sorted_idx_by_depth]
 
-        depth_thres = obj_depths[0]*(1-rel_depth)                       # filter out the people within the depth_threshold
-        a = [i for i, v in enumerate(obj_depths) if v >= depth_thres]
-        people_masks_idxs = people_masks_idxs[a]
+        depth_thres = obj_depths[0]*(1.0-rel_depth)                       # filter out the people within the depth_threshold
+        people_masks_idxs = people_masks_idxs[ [i for i, v in enumerate(obj_depths) if v >= depth_thres] ]
 
         np.array(people_masks_idxs).T.tolist()
         masks = masks[people_masks_idxs]
         num_dets_to_consider = len(people_masks_idxs)
 
+        print("depth_thres",depth_thres)
         print("people_masks_idxs: ",people_masks_idxs)
         print("num dets to consider: ", num_dets_to_consider)
 
