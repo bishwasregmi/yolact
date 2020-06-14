@@ -213,34 +213,34 @@ def evaluate_mod(net: Yolact, img):
 
 
 
-if __name__ == '__main__':
-
-    set_cfg('yolact_plus_resnet50_config')
-    cfg.mask_proto_debug = False
-
-    with torch.no_grad():
-        if not os.path.exists('results'):
-            os.makedirs('results')
-
-        if torch.cuda.is_available():
-            cudnn.fastest = True
-            torch.set_default_tensor_type('torch.cuda.FloatTensor')
-        else:
-            torch.set_default_tensor_type('torch.FloatTensor')
-
-        print('Loading model...', end='')
-        net = Yolact()
-        net.load_weights('/content/yolact/weights/yolact_plus_resnet50_54_800000.pth')
-        if torch.cuda.is_available():
-            net = net.cuda()
-        print(' Done.')
-        net.eval()
-
-        img = torch.from_numpy(cv2.imread('/content/yolact/photo.jpg')).cuda().float()
-
-        img_out_numpy = evaluate_mod(net, img)
-
-        # save the output image
-
-        # img_numpy = img_out_numpy[:, :, (2, 1, 0)]
-        cv2.imwrite('/content/yolact/photo_out.jpg', img_out_numpy)
+# if __name__ == '__main__':
+#
+#     set_cfg('yolact_plus_resnet50_config')
+#     cfg.mask_proto_debug = False
+#
+#     with torch.no_grad():
+#         if not os.path.exists('results'):
+#             os.makedirs('results')
+#
+#         if torch.cuda.is_available():
+#             cudnn.fastest = True
+#             torch.set_default_tensor_type('torch.cuda.FloatTensor')
+#         else:
+#             torch.set_default_tensor_type('torch.FloatTensor')
+#
+#         print('Loading model...', end='')
+#         net = Yolact()
+#         net.load_weights('/content/yolact/weights/yolact_plus_resnet50_54_800000.pth')
+#         if torch.cuda.is_available():
+#             net = net.cuda()
+#         print(' Done.')
+#         net.eval()
+#
+#         img = torch.from_numpy(cv2.imread('/content/yolact/photo.jpg')).cuda().float()
+#
+#         img_out_numpy = evaluate_mod(net, img)
+#
+#         # save the output image
+#
+#         # img_numpy = img_out_numpy[:, :, (2, 1, 0)]
+#         cv2.imwrite('/content/yolact/photo_out.jpg', img_out_numpy)
