@@ -213,7 +213,7 @@ def evalimage_mod(net: Yolact, img, depth_map):
 
 
 def evaluate_mod(net: Yolact, img, depth_map):
-    img_out = evalimage_mod(net, img, depth_map=depth_map)
+    img_out = evalimage_mod(net, img, depth_map)
     return img_out
 
 
