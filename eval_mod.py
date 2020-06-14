@@ -117,7 +117,7 @@ def prep_display_mod(dets_out, img, h, w,depth_map, rel_depth, undo_transform=Tr
         y_arr = np.array(x)
 
         obj_depths = []
-        for i in range(x.size):         # store the depths of the people
+        for i in range(x_arr.size):         # store the depths of the people
             obj_depths.append(depth_map[x_arr[i], y_arr[i], 0])
             print("depth at object i: ", x_arr[i], y_arr[i], " : ", obj_depths[i])
 
