@@ -318,15 +318,9 @@ def prep_display_mod(dets_out, img, h, w, undo_transform=True, mask_alpha=1.0): 
         img_gpu = img_gpu * torch.squeeze(inv_alph_masks, 0) + torch.squeeze(masks_color, 0)  # added
         # img_gpu = img_gpu
 
+    img_numpy = (img_gpu * 255.0).byte().cpu().numpy()
 
-
-    # Then draw the stuff that needs to be done on the cpu
-    # Note, make sure this is a uint8 tensor or opencv will not anti alias text for whatever reason
-
-
-img_numpy = (img_gpu * 255.0).byte().cpu().numpy()
-
-return img_numpy
+    return img_numpy
 
 
 def prep_coco_cats():
