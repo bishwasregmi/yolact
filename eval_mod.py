@@ -1035,7 +1035,7 @@ if __name__ == '__main__':
 
         print('Loading model...', end='')
         net = Yolact()
-        net.load_weights('/weights/yolact_plus_resnet50_54_800000.pth')
+        net.load_weights('/content/yolact/weights/yolact_plus_resnet50_54_800000.pth')
         if args.cuda:
             net = net.cuda()
         print(' Done.')
