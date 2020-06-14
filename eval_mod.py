@@ -186,8 +186,7 @@ def prep_display(dets_out, img, h, w, undo_transform=True, class_color=False, ma
         img_gpu = img_gpu * torch.squeeze(inv_alph_masks, 0) + torch.squeeze(masks_color, 0)  # added
         # img_gpu = img_gpu
 
-    def prep_display_mod(dets_out, img, h, w, undo_transform=True, class_color=False, mask_alpha=1.0,
-                     fps_str=''):  # was mask_alpha=0.45
+    def prep_display_mod(dets_out, img, h, w, undo_transform=True, mask_alpha=1.0):  # was mask_alpha=0.45
         """
         Note: If undo_transform=False then im_h and im_w are allowed to be None.
         """
@@ -679,7 +678,7 @@ def evalimage_mod(net: Yolact, img):
     batch = FastBaseTransform()(frame.unsqueeze(0))
     preds = net(batch)
 
-    img_numpy = prep_display(preds, frame, None, None, undo_transform=False)
+    img_numpy = prep_display_mod(preds, frame, None, None, undo_transform=False)
 
     if save_path is None:
         img_numpy = img_numpy[:, :, (2, 1, 0)]
