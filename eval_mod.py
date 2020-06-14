@@ -113,13 +113,13 @@ def prep_display_mod(dets_out, img, h, w,depth_map, rel_depth, undo_transform=Tr
         if num_dets_to_consider == 0:           # if no people, return black image
             return ((img_gpu * 0).byte().cpu().numpy())  # make it black before returning
 
-        x = np.array(y)
-        y = np.array(x)
+        x_arr = np.array(y)
+        y_arr = np.array(x)
 
         obj_depths = []
         for i in range(x.size):         # store the depths of the people
-            obj_depths.append(depth_map[x[i], y[i], 0])
-            print("depth at object i: ", x[i], y[i], " : ", obj_depths[i])
+            obj_depths.append(depth_map[x_arr[i], y_arr[i], 0])
+            print("depth at object i: ", x_arr[i], y_arr[i], " : ", obj_depths[i])
 
         obj_depths = np.array(obj_depths)
         people_masks_idxs = np.array(people_masks_idxs)
