@@ -36,7 +36,7 @@ color_cache = defaultdict(lambda: {})
 
 
 
-def prep_display_mod(dets_out, img, h, w, undo_transform=True, mask_alpha=1.0):  # was mask_alpha=0.45
+def prep_display_mod(dets_out, img, h, w,depth_map, undo_transform=True, mask_alpha=1.0 ):  # was mask_alpha=0.45
     """
     Note: If undo_transform=False then im_h and im_w are allowed to be None.
     """
@@ -112,6 +112,12 @@ def prep_display_mod(dets_out, img, h, w, undo_transform=True, mask_alpha=1.0): 
         print("x: ", x)
         print("y: ", y)
 
+        x = np.array(y)
+        y = np.array(x)
+
+        for i in range(x.size):
+            print("depth at object i: ", x[i], y[i], " : ", depth_map[x[i], y[i], 0])
+
         if num_dets_to_consider == 0:
             return ((img_gpu * 0).byte().cpu().numpy())  # make it black before returning
         # print("num_dets_to_consider: ", num_dets_to_consider)
@@ -184,13 +190,13 @@ def prep_display_mod(dets_out, img, h, w, undo_transform=True, mask_alpha=1.0): 
 
 
 
-def evalimage_mod(net: Yolact, img):
+def evalimage_mod(net: Yolact, img, depth_map):
     # frame = torch.from_numpy(cv2.imread(path)).cuda().float()
     frame = img
     batch = FastBaseTransform()(frame.unsqueeze(0))
     preds = net(batch)
 
-    img_numpy = prep_display_mod(preds, frame, None, None, undo_transform=False)
+    img_numpy = prep_display_mod(preds, frame, None, None, depth_map=depth_map undo_transform=False)
 
     return img_numpy
     # if save_path is None:
@@ -206,8 +212,8 @@ def evalimage_mod(net: Yolact, img):
 
 
 
-def evaluate_mod(net: Yolact, img):
-    img_out = evalimage_mod(net, img)
+def evaluate_mod(net: Yolact, img, depth_map):
+    img_out = evalimage_mod(net, img, depth_map=depth_map)
     return img_out
 
 
