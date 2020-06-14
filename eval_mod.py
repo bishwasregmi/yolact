@@ -1127,6 +1127,7 @@ def print_maps(all_maps):
 if __name__ == '__main__':
 
     set_cfg('yolact_plus_resnet50_config')
+    cfg.mask_proto_debug = False
 
     with torch.no_grad():
         if not os.path.exists('results'):
