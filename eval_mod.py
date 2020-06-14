@@ -36,7 +36,7 @@ color_cache = defaultdict(lambda: {})
 
 
 
-def prep_display_mod(dets_out, img, h, w,depth_map, undo_transform=True, mask_alpha=1.0 ):  # was mask_alpha=0.45
+def prep_display_mod(dets_out, img, h, w,depth_map, rel_depth, undo_transform=True, mask_alpha=1.0 ):  # was mask_alpha=0.45
     """
     Note: If undo_transform=False then im_h and im_w are allowed to be None.
     """
@@ -97,53 +97,44 @@ def prep_display_mod(dets_out, img, h, w,depth_map, undo_transform=True, mask_al
         # print("masks_og.shape", masks.shape)
 
         # begin added       // filter out the person masks and class indices
-        temp_masks = []
+        people_masks_idxs = []
         classes_to_mask = []
         x = []  # save the center points of the boxes in the same order as the masks
         y = []
         for i, j in enumerate(classes):
-            if j == 0:  # j = 0 for person class
-                temp_masks.append(i)
+            if j == 0:  # j = 0 for person class            # filter out only people's masks
+                people_masks_idxs.append(i)
                 classes_to_mask.append(j)
                 x1, y1, x2, y2 = boxes[i, :]
                 x.append(int((x1 + x2) / 2))
                 y.append(int((y1 + y2) / 2))
         num_dets_to_consider = len(classes_to_mask)
-        print("x: ", x)
-        print("y: ", y)
+
+        if num_dets_to_consider == 0:           # if no people, return black image
+            return ((img_gpu * 0).byte().cpu().numpy())  # make it black before returning
 
         x = np.array(y)
         y = np.array(x)
 
-        for i in range(x.size):
-            print("depth at object i: ", x[i], y[i], " : ", depth_map[x[i], y[i], 0])
+        obj_depths = []
+        for i in range(x.size):         # store the depths of the people
+            obj_depths.append(depth_map[x[i], y[i], 0])
+            print("depth at object i: ", x[i], y[i], " : ", obj_depths[i])
 
-        if num_dets_to_consider == 0:
-            return ((img_gpu * 0).byte().cpu().numpy())  # make it black before returning
-        # print("num_dets_to_consider: ", num_dets_to_consider)
-        # print("filtered classes : ", classes_to_mask)
-        # temp_masks = np.array(temp_masks).T
-        # print("temp_masks ", temp_masks)
-        # print(temp_masks.shape)
-        np.array(temp_masks).T.tolist()
-        # print("temp masks", temp_masks)
-        masks = masks[temp_masks]
-        # masks = masks[:,:,:,0]
-        # print("masks : ", masks)
-        # print("masks_filtered.shape", masks.shape)
-        # print("masks.shape[0]", masks.shape[0])
-        # end added
+        sorted_idx_by_depth = np.argsort(obj_depths)                # sort the masks and people_loc by depth
+        x = x[sorted_idx_by_depth]
+        y = y[sorted_idx_by_depth]
+        obj_depths = obj_depths[sorted_idx_by_depth]
+        people_masks_idxs = people_masks_idxs[sorted_idx_by_depth]
 
-        # Prepare the RGB images for each mask given their color (size [num_dets, h, w, 1])
-        # colors = torch.cat([get_color(j, on_gpu=img_gpu.device.index).view(1, 1, 1, 3) for j in range(num_dets_to_consider)], dim=0)   #original
-        # colors = torch.cat([get_color(j, on_gpu=img_gpu.device.index).view(1, 1, 1, 3) for j in classes_to_mask],     dim=0)  # added
-        colors = torch.cat([get_color(0, on_gpu=img_gpu.device.index).view(1, 1, 1, 3)], dim=0)  # added
-        # masks_color = masks.repeat(1, 1, 1, 3) * colors * mask_alpha  # original
-        # This is 1 everywhere except for 1-mask_alpha where the mask is
-        # inv_alph_masks = masks * (-mask_alpha) + 1      #original
+        depth_thres = obj_depths[0]*rel_depth                       # filter out the people within the depth_threshold
+        people_masks_idxs = people_masks_idxs[ [i for i, v in enumerate(obj_depths) if v >= depth_thres] ]
 
-        # begin added        // make an union of the stacked masks
-        num_dets_to_consider = 1
+        np.array(people_masks_idxs).T.tolist()
+        masks = masks[people_masks_idxs]
+        num_dets_to_consider = len(people_masks_idxs)
+
+        colors = torch.cat([get_color(0, on_gpu=img_gpu.device.index).view(1, 1, 1, 3)], dim=0)
         tmp = masks[0]
         if num_dets_to_consider > 1:
             for msk in masks[1:]:
@@ -190,13 +181,13 @@ def prep_display_mod(dets_out, img, h, w,depth_map, undo_transform=True, mask_al
 
 
 
-def evalimage_mod(net: Yolact, img, depth_map):
+def evalimage_mod(net: Yolact, img, depth_map, rel_depth):
     # frame = torch.from_numpy(cv2.imread(path)).cuda().float()
     frame = img
     batch = FastBaseTransform()(frame.unsqueeze(0))
     preds = net(batch)
 
-    img_numpy = prep_display_mod(preds, frame, None, None, depth_map, undo_transform=False)
+    img_numpy = prep_display_mod(preds, frame, None, None, depth_map,rel_depth,  undo_transform=False)
 
     return img_numpy
     # if save_path is None:
@@ -212,8 +203,8 @@ def evalimage_mod(net: Yolact, img, depth_map):
 
 
 
-def evaluate_mod(net: Yolact, img, depth_map):
-    img_out = evalimage_mod(net, img, depth_map)
+def evaluate_mod(net: Yolact, img, depth_map, rel_depth):
+    img_out = evalimage_mod(net, img, depth_map, rel_depth)
     return img_out
 
 
