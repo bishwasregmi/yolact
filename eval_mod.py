@@ -1151,3 +1151,8 @@ if __name__ == '__main__':
         img = torch.from_numpy(cv2.imread('/content/yolact/photo.jpg')).cuda().float()
 
         img_out_numpy = evaluate_mod(net, img)
+
+        # save the output image
+
+        img_numpy = img_out_numpy[:, :, (2, 1, 0)]
+        cv2.imwrite('/content/yolact/photo_out.jpg', img_numpy)
