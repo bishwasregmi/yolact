@@ -1154,5 +1154,5 @@ if __name__ == '__main__':
 
         # save the output image
 
-        img_numpy = img_out_numpy[:, :, (2, 1, 0)]
+        # img_numpy = img_out_numpy[:, :, (2, 1, 0)]
         cv2.imwrite('/content/yolact/photo_out.jpg', img_numpy)
