@@ -196,7 +196,7 @@ def prep_display_mod(dets_out, img, h, w, undo_transform=True, mask_alpha=1.0): 
     with timer.env('Postprocess'):
         save = cfg.rescore_bbox
         cfg.rescore_bbox = True
-        t = postprocess(dets_out, w, h, score_threshold)
+        t = postprocess(dets_out, w, h, score_threshold = score_threshold)
         cfg.rescore_bbox = save
 
     with timer.env('Copy'):
