@@ -121,6 +121,8 @@ def prep_display_mod(dets_out, img, h, w,depth_map, rel_depth, undo_transform=Tr
             obj_depths.append(depth_map[x[i], y[i], 0])
             print("depth at object i: ", x[i], y[i], " : ", obj_depths[i])
 
+        obj_depths = np.array(obj_depths)
+        people_masks_idxs = np.array(people_masks_idxs)
         sorted_idx_by_depth = np.argsort(obj_depths)                # sort the masks and people_loc by depth
         x = x[sorted_idx_by_depth]
         y = y[sorted_idx_by_depth]
