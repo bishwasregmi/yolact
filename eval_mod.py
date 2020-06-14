@@ -123,7 +123,7 @@ def prep_display_mod(dets_out, img, h, w,depth_map, rel_depth, undo_transform=Tr
 
         obj_depths = np.array(obj_depths)
         people_masks_idxs = np.array(people_masks_idxs)
-        sorted_idx_by_depth = np.array(np.argsort(obj_depths))                # sort the masks and people_loc by depth
+        sorted_idx_by_depth = np.array(np.argsort(-obj_depths))                # sort the masks and people_loc by depth in Descending order
         # x = x[sorted_idx_by_depth]
         # y = y[sorted_idx_by_depth]
         obj_depths = obj_depths[sorted_idx_by_depth]
@@ -135,11 +135,6 @@ def prep_display_mod(dets_out, img, h, w,depth_map, rel_depth, undo_transform=Tr
         np.array(people_masks_idxs).T.tolist()
         masks = masks[people_masks_idxs]
         num_dets_to_consider = len(people_masks_idxs)
-
-        print("obj_depths: ", obj_depths)
-        print("depth_thres",depth_thres)
-        print("people_masks_idxs: ",people_masks_idxs)
-        print("num dets to consider: ", num_dets_to_consider)
 
         colors = torch.cat([get_color(0, on_gpu=img_gpu.device.index).view(1, 1, 1, 3)], dim=0)
         tmp = masks[0]
