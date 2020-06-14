@@ -666,15 +666,16 @@ def evalimage_mod(net: Yolact, img):
 
     img_numpy = prep_display_mod(preds, frame, None, None, undo_transform=False)
 
-    if save_path is None:
-        img_numpy = img_numpy[:, :, (2, 1, 0)]
-
-    if save_path is None:
-        plt.imshow(img_numpy)
-        plt.title(path)
-        plt.show()
-    else:
-        cv2.imwrite(save_path, img_numpy)
+    return img_numpy
+    # if save_path is None:
+    #     img_numpy = img_numpy[:, :, (2, 1, 0)]
+    #
+    # if save_path is None:
+    #     plt.imshow(img_numpy)
+    #     plt.title(path)
+    #     plt.show()
+    # else:
+    #     cv2.imwrite(save_path, img_numpy)
 
 
 def evalimages(net: Yolact, input_folder: str, output_folder: str):
@@ -1077,8 +1078,8 @@ def evaluate(net: Yolact, dataset, train_mode=False):
 
 
 def evaluate_mod(net: Yolact, img):
-    evalimage_mod(net, img)
-    return
+    img_out = evalimage_mod(net, img)
+    return img_out
 
 
 def calc_map(ap_data):
@@ -1149,4 +1150,4 @@ if __name__ == '__main__':
 
         img = torch.from_numpy(cv2.imread('/content/yolact/photo.jpg')).cuda().float()
 
-        evaluate_mod(net, img)
+        img_out_numpy = evaluate_mod(net, img)
