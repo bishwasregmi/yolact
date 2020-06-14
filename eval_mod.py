@@ -136,6 +136,7 @@ def prep_display_mod(dets_out, img, h, w,depth_map, rel_depth, undo_transform=Tr
         masks = masks[people_masks_idxs]
         num_dets_to_consider = len(people_masks_idxs)
 
+        print("obj_depths: ", obj_depths)
         print("depth_thres",depth_thres)
         print("people_masks_idxs: ",people_masks_idxs)
         print("num dets to consider: ", num_dets_to_consider)
