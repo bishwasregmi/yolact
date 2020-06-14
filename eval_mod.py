@@ -1064,6 +1064,6 @@ if __name__ == '__main__':
         print(' Done.')
         net.eval()
 
-        img = torch.from_numpy(cv2.imread('photo.jpg')).cuda().float()
+        img = torch.from_numpy(cv2.imread('/content/yolact/photo.jpg')).cuda().float()
 
         evaluate_mod(net, img)
