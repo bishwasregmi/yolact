@@ -196,7 +196,7 @@ def evalimage_mod(net: Yolact, img, depth_map):
     batch = FastBaseTransform()(frame.unsqueeze(0))
     preds = net(batch)
 
-    img_numpy = prep_display_mod(preds, frame, None, None, depth_map=depth_map undo_transform=False)
+    img_numpy = prep_display_mod(preds, frame, None, None, depth_map=depth_map, undo_transform=False)
 
     return img_numpy
     # if save_path is None:
