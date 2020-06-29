@@ -173,6 +173,15 @@ pascal_sbd_dataset = dataset_base.copy({
     'class_names': PASCAL_CLASSES,
 })
 
+webcam_dataset = dataset_base.copy({
+  'name': 'Webcam Dataset',
+  'train_info': 'Self_Training/trainval.json',
+  'train_images': 'Self_Training/Training_images',
+  'valid_info': 'Self_Training/trainval.json',
+  'valid_images': 'Self_Training/Training_images',
+  'class_names': ('webcam'),
+  'label_map': { 1:  1 }
+})
 
 
 
@@ -766,6 +775,16 @@ yolact_resnet50_pascal_config = yolact_resnet50_config.copy({
         'pred_scales': [[32], [64], [128], [256], [512]],
         'use_square_anchors': False,
     })
+})
+
+yolact_resnet50_webcam_config = yolact_resnet50_config.copy({
+    'name': 'yolact_plus_resnet50_webcam',
+    # Dataset stuff
+    'dataset': webcam_dataset,
+    'num_classes': len(webcam_dataset.class_names) + 1,
+
+    # Image Size
+    'max_size': 512,
 })
 
 # ----------------------- YOLACT++ CONFIGS ----------------------- #
