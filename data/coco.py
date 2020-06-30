@@ -136,42 +136,50 @@ class COCODetection(data.Dataset):
         
         if file_name.startswith('COCO'):
             file_name = file_name.split('_')[-1]
-
-        path = osp.join(self.root, file_name)
+        
+        path = osp.join(self.root, file_name).replace("\\","/")
+        path = path.split("../")[0] + path.split("../")[1]
+        #print(path)
+        #path = osp.realpath(path)
         assert osp.exists(path), 'Image path does not exist: {}'.format(path)
         
-        img = cv2.imread(path)
-        height, width, _ = img.shape
-        
-        if len(target) > 0:
-            # Pool all the masks for this image into one [num_objects,height,width] matrix
-            masks = [self.coco.annToMask(obj).reshape(-1) for obj in target]
-            masks = np.vstack(masks)
-            masks = masks.reshape(-1, height, width)
+        try:
+          img = cv2.imread(path)
+          #cv2.imshow(img)
+          height, width, _ = img.shape
+          #print(height+'  '+weight)
+          
+          if len(target) > 0:
+              # Pool all the masks for this image into one [num_objects,height,width] matrix
+              masks = [self.coco.annToMask(obj).reshape(-1) for obj in target]
+              masks = np.vstack(masks)
+              masks = masks.reshape(-1, height, width)
 
-        if self.target_transform is not None and len(target) > 0:
-            target = self.target_transform(target, width, height)
+          if self.target_transform is not None and len(target) > 0:
+              target = self.target_transform(target, width, height)
 
-        if self.transform is not None:
-            if len(target) > 0:
-                target = np.array(target)
-                img, masks, boxes, labels = self.transform(img, masks, target[:, :4],
-                    {'num_crowds': num_crowds, 'labels': target[:, 4]})
-            
-                # I stored num_crowds in labels so I didn't have to modify the entirety of augmentations
-                num_crowds = labels['num_crowds']
-                labels     = labels['labels']
-                
-                target = np.hstack((boxes, np.expand_dims(labels, axis=1)))
-            else:
-                img, _, _, _ = self.transform(img, np.zeros((1, height, width), dtype=np.float), np.array([[0, 0, 1, 1]]),
-                    {'num_crowds': 0, 'labels': np.array([0])})
-                masks = None
-                target = None
+          if self.transform is not None:
+              if len(target) > 0:
+                  target = np.array(target)
+                  img, masks, boxes, labels = self.transform(img, masks, target[:, :4],
+                      {'num_crowds': num_crowds, 'labels': target[:, 4]})
+              
+                  # I stored num_crowds in labels so I didn't have to modify the entirety of augmentations
+                  num_crowds = labels['num_crowds']
+                  labels     = labels['labels']
+                  
+                  target = np.hstack((boxes, np.expand_dims(labels, axis=1)))
+              else:
+                  img, _, _, _ = self.transform(img, np.zeros((1, height, width), dtype=np.float), np.array([[0, 0, 1, 1]]),
+                      {'num_crowds': 0, 'labels': np.array([0])})
+                  masks = None
+                  target = None
 
-        if target.shape[0] == 0:
-            print('Warning: Augmentation output an example with no ground truth. Resampling...')
-            return self.pull_item(random.randint(0, len(self.ids)-1))
+          if target.shape[0] == 0:
+              print('Warning: Augmentation output an example with no ground truth. Resampling...')
+              return self.pull_item(random.randint(0, len(self.ids)-1))
+        except:
+          print("Problem...................."+path)
 
         return torch.from_numpy(img).permute(2, 0, 1), target, masks, height, width, num_crowds
 
