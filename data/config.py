@@ -783,6 +783,16 @@ yolact_resnet50_webcam_config = yolact_resnet50_config.copy({
     'dataset': webcam_dataset,
     'num_classes': len(webcam_dataset.class_names) + 1,
 
+    'backbone': resnet50_dcnv2_backbone.copy({
+        'selected_layers': list(range(1, 4)),
+
+        'pred_aspect_ratios': [[[1, 1 / 2, 2]]] * 5,
+        'pred_scales': [[i * 2 ** (j / 3.0) for j in range(3)] for i in [24, 48, 96, 192, 384]],
+        'use_pixel_scales': True,
+        'preapply_sqrt': False,
+        'use_square_anchors': False,
+    }),
+
     # Image Size
     'max_size': 512,
 })
