@@ -175,13 +175,14 @@ pascal_sbd_dataset = dataset_base.copy({
 
 webcam_dataset = dataset_base.copy({
   'name': 'Webcam Dataset',
-  'train_info': 'Self_Training/trainval.json',
-  'train_images': 'Self_Training/Training_images',
-  'valid_info': 'Self_Training/trainval.json',
-  'valid_images': 'Self_Training/Training_images',
+  'train_info': '/content/yolact/Self_Training/trainval.json',
+  'train_images': '/content/yolact/Self_Training/Images',
+  'valid_info': '/content/yolact/Self_Training/trainval.json',
+  'valid_images': '/content/yolact/Self_Training/Images',
   'class_names': ('webcam'),
   'label_map': { 1:  1 }
 })
+
 
 
 
